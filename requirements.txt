@@ -1,0 +1,4 @@
+pdfplumber
+requests
+slack_sdk
+slackeventsapi
