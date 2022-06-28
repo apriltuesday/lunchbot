@@ -73,9 +73,25 @@ def get_menu(date):
     return all_items, all_allergens, all_may_contains
 
 
+def gluten_alert(allergens):
+    evil_ingredient = {'Wheat', 'Rye', 'Barley', 'Oats'}
+    meals = []
+    for meal in allergens:
+        gluten_alert = []
+        if evil_ingredient.intersection(meal):
+            gluten_alert.append("Gluten!")
+        else:
+            gluten_alert.append("")
+
+        meals.append(gluten_alert)
+
+    return meals
+
+
 if __name__ == '__main__':
     # for testing
     items, allergens, may_contains = get_menu(datetime.date.today())
     print(items)
     print(allergens)
     print(may_contains)
+    [print(gluten_alert(x)) for x in [allergens, may_contains]]
