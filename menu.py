@@ -6,6 +6,7 @@ import pdfplumber
 import requests
 
 from tempfile import NamedTemporaryFile
+from meal import Meal
 
 base_url = 'https://food-rewards.com/wp-content/uploads/'
 tmp_file = NamedTemporaryFile(delete=False)
@@ -74,22 +75,12 @@ def get_menu(date):
     return all_items, all_allergens, all_may_contains
 
 
-def gluten_alert(allergens):
-    evil_ingredient = {'Wheat', 'Rye', 'Barley', 'Oats'}
-    meals = []
-    for meal in allergens:
-        if evil_ingredient.intersection(meal):
-            meals.append("Gluten!")
-        else:
-            meals.append(None)
-
-    return meals
-
-
 if __name__ == '__main__':
     # for testing
     items, allergens, may_contains = get_menu(datetime.date.today())
+    meals =  Meal().from_menu(items, allergens, may_contains)
     print(items)
     print(allergens)
     print(may_contains)
-    [print(gluten_alert(x)) for x in [allergens, may_contains]]
+    [print(meal, meal.is_gluten_free()) for meal in meals]
+
