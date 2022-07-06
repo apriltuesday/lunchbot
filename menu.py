@@ -5,9 +5,11 @@ import re
 import pdfplumber
 import requests
 
+from tempfile import NamedTemporaryFile
+from meal import Meal
 
 base_url = 'https://food-rewards.com/wp-content/uploads/'
-tmp_file = '/tmp/menu.pdf'
+tmp_file = NamedTemporaryFile(delete=False)
 
 days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -48,7 +50,7 @@ def get_menu(date):
     response = requests.get(os.path.join(base_url, get_filepath(date)))
     response.raise_for_status()
 
-    with open(tmp_file, 'wb') as f:
+    with open(tmp_file.name, 'wb') as f:
         f.write(response.content)
 
     f = pdfplumber.open(tmp_file)
@@ -76,6 +78,9 @@ def get_menu(date):
 if __name__ == '__main__':
     # for testing
     items, allergens, may_contains = get_menu(datetime.date.today())
+    meals =  Meal().from_menu(items, allergens, may_contains)
     print(items)
     print(allergens)
     print(may_contains)
+    [print(meal, meal.is_gluten_free()) for meal in meals]
+
